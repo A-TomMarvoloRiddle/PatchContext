@@ -420,9 +420,7 @@ data/ragas_scores.csv
 
 ---
 
-# Acknowledgements
-
-Built using:
+# Built using:
 
 - LangChain
 - OpenAI
