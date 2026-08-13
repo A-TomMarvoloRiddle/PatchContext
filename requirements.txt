@@ -1,0 +1,32 @@
+# Core LangChain stack
+langchain>=0.2.0
+langchain-core>=0.2.0
+langchain-openai>=0.1.0
+langchain-community>=0.2.0
+
+# Vector store
+faiss-cpu>=1.7.4
+
+# OpenAI SDK 
+openai>=1.30.0
+
+# GitHub API
+PyGithub>=2.3.0
+
+# NLI / transformers
+transformers>=4.40.0
+torch>=2.2.0
+sentence-transformers>=3.0.0
+
+# Evaluation
+ragas>=0.1.9
+datasets>=2.19.0
+
+# Streamlit UI
+streamlit>=1.35.0
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+tqdm>=4.66.0
+tenacity>=8.3.0
