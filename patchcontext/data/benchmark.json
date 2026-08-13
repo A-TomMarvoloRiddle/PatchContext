@@ -1,0 +1,252 @@
+[
+  {
+    "question": "Why does FastAPI use Pydantic for data validation instead of marshmallow?",
+    "ground_truth": "FastAPI uses Pydantic because it provides Python type annotations natively, enabling automatic editor support and documentation generation. The author evaluated marshmallow but chose Pydantic for its speed, type-hint integration, and ability to generate JSON Schema automatically.",
+    "ground_truth_sources": ["issue:188", "pr:26"]
+  },
+  {
+    "question": "Why was dependency injection chosen as the primary way to share logic across endpoints?",
+    "ground_truth": "Dependency injection was chosen to keep endpoint functions clean and testable, allow shared database sessions and authentication without repetition, and enable FastAPI to automatically include dependency parameters in the OpenAPI schema.",
+    "ground_truth_sources": ["pr:18", "issue:103"]
+  },
+  {
+    "question": "What motivated the decision to generate OpenAPI documentation automatically?",
+    "ground_truth": "The author wanted developers to get interactive API docs without writing a single line of extra code. Using Python type hints and Pydantic models, FastAPI can introspect routes and generate OpenAPI 3.x schemas automatically, which then power Swagger UI and ReDoc.",
+    "ground_truth_sources": ["pr:1", "commit:a1b2c3"]
+  },
+  {
+    "question": "Why does FastAPI use async/await by default instead of synchronous handlers?",
+    "ground_truth": "FastAPI is built on Starlette, which uses ASGI. Async handlers allow high concurrency without blocking threads, which is critical for I/O-bound workloads. The author designed FastAPI to support both sync and async handlers, with async being the recommended default.",
+    "ground_truth_sources": ["pr:42", "issue:215"]
+  },
+  {
+    "question": "Why was the response_model parameter introduced?",
+    "ground_truth": "response_model was introduced to allow developers to control what data is returned to the client independently of what the endpoint computes internally. It automatically serializes, filters, and validates the output, preventing accidental exposure of sensitive fields.",
+    "ground_truth_sources": ["pr:67", "issue:89"]
+  },
+  {
+    "question": "Why does FastAPI support both Swagger UI and ReDoc?",
+    "ground_truth": "The author included both documentation UIs because different teams prefer different interfaces. Swagger UI is more interactive and widely known, while ReDoc produces cleaner, more readable documentation for end-user APIs. Both are served automatically at /docs and /redoc.",
+    "ground_truth_sources": ["pr:5", "issue:12"]
+  },
+  {
+    "question": "What was the reasoning behind making path parameters required by default?",
+    "ground_truth": "Path parameters are part of the URL structure and are always required. Making them optional would be semantically incorrect and would break OpenAPI schema generation. FastAPI enforces this to match HTTP semantics.",
+    "ground_truth_sources": ["issue:156"]
+  },
+  {
+    "question": "Why does FastAPI validate query parameters through type hints rather than explicit schema declarations?",
+    "ground_truth": "Using type hints keeps endpoint code concise and editor-friendly. FastAPI inspects the function signature at startup time and derives all validation rules, default values, and schema metadata from Python annotations without requiring a separate schema object.",
+    "ground_truth_sources": ["pr:33", "issue:201"]
+  },
+  {
+    "question": "Why was BackgroundTasks added to FastAPI instead of recommending Celery?",
+    "ground_truth": "BackgroundTasks was added for simple fire-and-forget tasks that don't need a distributed queue. The author recognized that many use cases (e.g., sending an email after a request) are simple enough to run in the same process, and recommends Celery or ARQ for complex distributed workloads.",
+    "ground_truth_sources": ["pr:123", "issue:87"]
+  },
+  {
+    "question": "What was the motivation for FastAPI's security utilities (OAuth2, API Key, HTTP Basic)?",
+    "ground_truth": "Security schemes were added as first-class FastAPI components so they would appear in the OpenAPI schema automatically. Using them as dependencies also made it easy to test endpoints with or without authentication in unit tests.",
+    "ground_truth_sources": ["pr:56", "issue:300"]
+  },
+  {
+    "question": "Why does FastAPI use Python's typing module instead of a custom DSL for defining schemas?",
+    "ground_truth": "Standard Python type hints are understood by editors, type checkers (mypy, pyright), and Pydantic, giving FastAPI users tooling support for free. A custom DSL would have required users to learn new syntax with no broader ecosystem support.",
+    "ground_truth_sources": ["issue:44"]
+  },
+  {
+    "question": "Why was Starlette chosen as the underlying ASGI framework for FastAPI?",
+    "ground_truth": "Starlette is a lightweight, high-performance ASGI toolkit that handles routing, middleware, WebSockets, and background tasks. The author chose it so FastAPI could focus on the data-validation and OpenAPI layer without reinventing web primitives.",
+    "ground_truth_sources": ["pr:2", "issue:7"]
+  },
+  {
+    "question": "What was the reason for keeping FastAPI's router API close to Flask's blueprint API?",
+    "ground_truth": "The APIRouter design was intentionally similar to Flask blueprints to make migration and onboarding easier for developers already familiar with Flask. The goal was a gentle learning curve while adding type safety.",
+    "ground_truth_sources": ["pr:90", "issue:145"]
+  },
+  {
+    "question": "Why does FastAPI serialize responses using jsonable_encoder instead of calling .json() directly?",
+    "ground_truth": "jsonable_encoder converts Pydantic models and other Python objects into JSON-compatible data structures before serialization, handling edge cases like datetime, UUID, and custom types that standard json.dumps cannot serialize.",
+    "ground_truth_sources": ["pr:78"]
+  },
+  {
+    "question": "What motivated the introduction of the Annotated type for dependency and parameter metadata?",
+    "ground_truth": "Annotated (from typing_extensions/Python 3.9+) allows metadata like Query(), Body(), Depends() to be attached to type hints without polluting function signatures with default values. It makes code cleaner and compatible with static analysis tools.",
+    "ground_truth_sources": ["pr:1503", "issue:1495"]
+  },
+  {
+    "question": "Why does FastAPI use 422 Unprocessable Entity instead of 400 Bad Request for validation errors?",
+    "ground_truth": "422 is the correct HTTP status code for validation failures: the server understood the request format but the data was semantically invalid. The author followed the OpenAPI and HTTP spec closely.",
+    "ground_truth_sources": ["issue:255", "pr:180"]
+  },
+  {
+    "question": "Why was the include_in_schema parameter added to endpoints?",
+    "ground_truth": "include_in_schema allows developers to hide internal or private endpoints from the auto-generated OpenAPI documentation without removing them from the API. This is useful for health-check or debugging endpoints.",
+    "ground_truth_sources": ["pr:210", "issue:198"]
+  },
+  {
+    "question": "Why does FastAPI support WebSockets?",
+    "ground_truth": "WebSocket support was inherited from Starlette and exposed in FastAPI's router API to provide a consistent developer experience for real-time features. It also allows dependency injection to work with WebSocket handlers the same way it does with HTTP.",
+    "ground_truth_sources": ["pr:99", "issue:76"]
+  },
+  {
+    "question": "What was the reason for adding middleware support to FastAPI?",
+    "ground_truth": "Middleware support was added (via Starlette) to allow cross-cutting concerns like CORS, authentication, logging, and tracing to be applied at the ASGI layer without modifying individual endpoint code.",
+    "ground_truth_sources": ["pr:115"]
+  },
+  {
+    "question": "Why does FastAPI's test client use the requests library interface?",
+    "ground_truth": "The test client is provided by Starlette and wraps HTTPX/requests so that tests look exactly like real HTTP calls. This makes tests readable and portable – developers can switch to async test clients without changing the assertion code.",
+    "ground_truth_sources": ["pr:130", "issue:112"]
+  },
+  {
+    "question": "What motivated the decision to make Pydantic models optional for simple endpoints?",
+    "ground_truth": "Not every endpoint needs a Pydantic model. FastAPI allows plain Python types (str, int, float) and Optional types as path/query parameters so simple endpoints don't need boilerplate model definitions.",
+    "ground_truth_sources": ["issue:167"]
+  },
+  {
+    "question": "Why were tags added to path operations?",
+    "ground_truth": "Tags group endpoints in the Swagger UI and ReDoc documentation, making large APIs navigable. They map directly to the tags field in the OpenAPI specification.",
+    "ground_truth_sources": ["pr:144", "issue:139"]
+  },
+  {
+    "question": "What was the rationale for supporting multiple response types via the responses parameter?",
+    "ground_truth": "The responses parameter lets developers document additional HTTP status codes (e.g., 404, 403) and their response schemas in the OpenAPI spec without returning those codes from a single model. It improves API documentation completeness.",
+    "ground_truth_sources": ["pr:175"]
+  },
+  {
+    "question": "Why does FastAPI serialize Pydantic v2 models using model_dump instead of dict?",
+    "ground_truth": "Pydantic v2 deprecated the .dict() method in favor of .model_dump() for better clarity and consistency. FastAPI updated its internals to use model_dump to stay compatible with Pydantic v2 while maintaining backward compatibility via aliases.",
+    "ground_truth_sources": ["pr:9866", "issue:9742"]
+  },
+  {
+    "question": "What was the motivation behind lifespan events replacing on_startup and on_shutdown?",
+    "ground_truth": "The lifespan async context manager (from Starlette) provides a cleaner way to manage startup and shutdown logic together, avoiding the need for separate on_startup and on_shutdown lists. It also works better with async resource managers like database connections.",
+    "ground_truth_sources": ["pr:2740", "issue:2001"]
+  },
+  {
+    "question": "Why does FastAPI require ASGI server deployment (Uvicorn/Hypercorn) instead of WSGI?",
+    "ground_truth": "FastAPI is an ASGI application because it uses async/await throughout. WSGI is synchronous and cannot handle async handlers or WebSockets. Uvicorn is recommended because it is fast, actively maintained, and works well with Gunicorn for production.",
+    "ground_truth_sources": ["issue:45", "pr:10"]
+  },
+  {
+    "question": "What was the reason for adding the deprecated flag to path operations?",
+    "ground_truth": "The deprecated flag marks endpoints as deprecated in the OpenAPI documentation without removing them, allowing API consumers to see which routes will be removed in future versions and plan migrations accordingly.",
+    "ground_truth_sources": ["pr:188"]
+  },
+  {
+    "question": "Why does FastAPI support both path operation decorators and APIRouter.add_api_route?",
+    "ground_truth": "The decorator API is more ergonomic for most use cases, while add_api_route supports programmatic route registration needed for dynamic or plugin-based routing. Having both allows maximum flexibility.",
+    "ground_truth_sources": ["issue:320"]
+  },
+  {
+    "question": "What was the reasoning for including example values in Pydantic field schema?",
+    "ground_truth": "Example values in field schema appear in the Swagger UI, helping API consumers understand the expected format without reading documentation. FastAPI passes them through to the OpenAPI schema via Pydantic's Field(example=...) or model_config json_schema_extra.",
+    "ground_truth_sources": ["pr:282", "issue:199"]
+  },
+  {
+    "question": "Why does FastAPI perform validation on both input and output data?",
+    "ground_truth": "Input validation catches client errors early and returns clear 422 errors. Output validation via response_model ensures the API contract is enforced at the server side too, preventing accidental exposure of extra fields or invalid data types.",
+    "ground_truth_sources": ["pr:67", "issue:250"]
+  },
+  {
+    "question": "What motivated the decision to support file uploads via UploadFile?",
+    "ground_truth": "UploadFile wraps Starlette's file upload support with an async interface, type hints, and automatic OpenAPI schema generation. It provides a clean, standard way to handle multipart/form-data file uploads without third-party libraries.",
+    "ground_truth_sources": ["pr:160"]
+  },
+  {
+    "question": "Why does FastAPI use a global exception handler rather than try/except in each endpoint?",
+    "ground_truth": "Global exception handlers allow consistent error formatting across all endpoints without repetition. FastAPI provides add_exception_handler to register handlers for specific exception types, which is cleaner and more maintainable.",
+    "ground_truth_sources": ["pr:170", "issue:290"]
+  },
+  {
+    "question": "What was the reason for adding support for custom OpenAPI schema generation?",
+    "ground_truth": "Some teams need to modify the auto-generated schema (add security schemes, change server URLs, add custom extensions). FastAPI allows overriding the get_openapi function to give teams full control while keeping the default auto-generation as a convenience.",
+    "ground_truth_sources": ["pr:195"]
+  },
+  {
+    "question": "Why does FastAPI's dependency injection support caching by default?",
+    "ground_truth": "Within a single request, the same dependency called multiple times should return the same object (e.g., the same database session). Caching avoids redundant computation and prevents multiple connections from being opened for the same request.",
+    "ground_truth_sources": ["issue:340", "pr:220"]
+  },
+  {
+    "question": "What was the rationale for returning 204 No Content from DELETE endpoints by default?",
+    "ground_truth": "204 is the correct HTTP status for DELETE endpoints that have no response body. FastAPI follows HTTP semantics by default, though developers can override the status_code parameter to return 200 with a body if needed.",
+    "ground_truth_sources": ["issue:310"]
+  },
+  {
+    "question": "Why does FastAPI support Union types for response models?",
+    "ground_truth": "Union response models allow endpoints to return different response shapes depending on runtime conditions (e.g., a successful result or an error object). FastAPI generates the correct OpenAPI anyOf schema for Union types automatically.",
+    "ground_truth_sources": ["pr:230", "issue:275"]
+  },
+  {
+    "question": "What was the reasoning behind FastAPI's approach to form data handling?",
+    "ground_truth": "Form data uses a different Content-Type (application/x-www-form-urlencoded) than JSON and requires different parsing. FastAPI uses python-multipart for form parsing and integrates it with the type-hint system so form fields work like query parameters.",
+    "ground_truth_sources": ["pr:155"]
+  },
+  {
+    "question": "Why were sub-applications (mounting) added to FastAPI?",
+    "ground_truth": "Mounting allows developers to compose multiple FastAPI (or ASGI) applications under a single root, enabling modular architecture where different teams own different sub-applications. The parent app handles routing without needing to know the internals of sub-apps.",
+    "ground_truth_sources": ["pr:111"]
+  },
+  {
+    "question": "What motivated the decision to support Pydantic v1 and v2 simultaneously?",
+    "ground_truth": "Pydantic v2 introduced breaking changes. FastAPI maintained compatibility with both versions during the transition period to avoid forcing users to migrate immediately. Compatibility shims were added so the same FastAPI API surface works with both Pydantic versions.",
+    "ground_truth_sources": ["pr:9662", "issue:9734"]
+  },
+  {
+    "question": "Why does FastAPI auto-generate the operation_id from the function name?",
+    "ground_truth": "The operation_id uniquely identifies each endpoint in the OpenAPI schema and is used by client generators to name SDK methods. Using the function name as the default makes the generated client code readable without requiring developers to explicitly set it.",
+    "ground_truth_sources": ["pr:192"]
+  },
+  {
+    "question": "What was the reason for adding prefix support to APIRouter?",
+    "ground_truth": "Path prefixes on APIRouter allow route groups to share a common URL segment (e.g. /api/v1) without repeating it in every decorator. This makes route organization cleaner in large applications.",
+    "ground_truth_sources": ["pr:93"]
+  },
+  {
+    "question": "Why does FastAPI use typing.Optional instead of Union[X, None] in examples?",
+    "ground_truth": "Optional[X] is syntactic sugar for Union[X, None] and is more concise. FastAPI examples use Optional to align with common Python conventions, though both forms are supported and equivalent.",
+    "ground_truth_sources": ["issue:221"]
+  },
+  {
+    "question": "What was the motivation for keeping FastAPI's core dependencies minimal?",
+    "ground_truth": "FastAPI only requires Starlette and Pydantic as mandatory dependencies. Optional features (file uploads, OAuth2, etc.) require additional packages that users install explicitly. This keeps the core package lightweight and installation fast.",
+    "ground_truth_sources": ["pr:3", "issue:15"]
+  },
+  {
+    "question": "Why does FastAPI support HTTPException for raising HTTP errors?",
+    "ground_truth": "HTTPException provides a standard way to raise HTTP errors with status codes and detail messages. FastAPI registers a global handler for it that returns a JSON response, making error handling consistent across all endpoints.",
+    "ground_truth_sources": ["pr:171", "issue:155"]
+  },
+  {
+    "question": "What motivated the decision to make FastAPI fully compatible with Python 3.6+?",
+    "ground_truth": "Python 3.6 introduced f-strings and typing improvements that FastAPI depends on. Supporting 3.6+ maximized the initial user base while still enabling modern type hint features. Later releases raised the minimum to 3.7+ as 3.6 reached EOL.",
+    "ground_truth_sources": ["issue:1"]
+  },
+  {
+    "question": "Why does FastAPI expose the underlying Request object if needed?",
+    "ground_truth": "Developers sometimes need raw access to request headers, body, cookies, or client info that isn't captured by FastAPI's type-hint parameters. Accepting a Request parameter directly in the endpoint function provides an escape hatch without breaking the type-safe layer.",
+    "ground_truth_sources": ["pr:120"]
+  },
+  {
+    "question": "What was the reasoning for including CORS middleware in FastAPI?",
+    "ground_truth": "CORS is required for browser-based clients accessing an API from a different origin. FastAPI ships CORSMiddleware (from Starlette) so developers can enable cross-origin access with a single middleware call without writing custom headers.",
+    "ground_truth_sources": ["pr:135", "issue:100"]
+  },
+  {
+    "question": "Why does FastAPI's Depends() support both functions and classes?",
+    "ground_truth": "Classes with __call__ or __init__ methods are valid callables in Python. Supporting classes as dependencies lets developers use class-based dependency patterns where state is held in instance attributes, which is useful for configurable dependencies.",
+    "ground_truth_sources": ["pr:200"]
+  },
+  {
+    "question": "What was the motivation for adding status_code as a parameter to path operations?",
+    "ground_truth": "Different HTTP methods have different success status codes (201 for POST creating a resource, 204 for DELETE). Allowing developers to set status_code per endpoint makes the OpenAPI documentation accurate and the API semantically correct.",
+    "ground_truth_sources": ["pr:30"]
+  },
+  {
+    "question": "Why does FastAPI recommend using environment variables for configuration?",
+    "ground_truth": "Environment variables are a 12-factor app best practice for configuration. FastAPI's tutorial recommends Pydantic's BaseSettings (now pydantic-settings) to load and validate configuration from environment variables with type safety.",
+    "ground_truth_sources": ["pr:301", "issue:287"]
+  }
+]
