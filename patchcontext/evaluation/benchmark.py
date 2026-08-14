@@ -62,8 +62,7 @@ def run_benchmark(
     Args:
         retriever: The configured LangChain MMR retriever.
         benchmark_file: Path to the benchmark JSON. Defaults to config.
-        max_questions: If set, only run the first N questions (useful for
-                       quick smoke tests).
+        max_questions: If set, only run the first N questions (useful for quick smoke tests).
         skip_guard: Skip the NLI guard for faster evaluation runs.
 
     Returns:
