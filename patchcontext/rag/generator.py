@@ -68,12 +68,28 @@ def format_docs(docs: list[Document]) -> str:
 
 
 def _get_structured_llm() -> object:
-    """Return a gpt-4o-mini instance configured for structured output."""
-    llm = ChatOpenAI(
-        model=config.LLM_MODEL,
-        temperature=config.LLM_TEMPERATURE,
-        openai_api_key=config.OPENAI_API_KEY,
-    )
+    """Return a ChatOpenAI instance configured for structured output."""
+    # Determine the appropriate API key
+    if "groq.com" in config.LLM_BASE_URL.lower():
+        api_key = config.GROQ_API_KEY or config.OPENAI_API_KEY or "dummy-key"
+    else:
+        api_key = config.OPENAI_API_KEY or config.GROQ_API_KEY or "dummy-key"
+
+    kwargs = {
+        "model": config.LLM_MODEL,
+        "temperature": config.LLM_TEMPERATURE,
+        "openai_api_key": api_key,
+    }
+    if config.LLM_BASE_URL:
+        kwargs["openai_api_base"] = config.LLM_BASE_URL
+
+    is_groq = "groq.com" in config.LLM_BASE_URL.lower()
+    llm = ChatOpenAI(**kwargs)
+    
+    # Groq supports json_mode ('json_object'), not json_schema
+    method = "json_mode" if is_groq else None
+    if method:
+        return llm.with_structured_output(PatchContextAnswer, method=method)
     return llm.with_structured_output(PatchContextAnswer)
 
 
