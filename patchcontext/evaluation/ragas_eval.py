@@ -68,6 +68,13 @@ def run_ragas_evaluation(
         A ``pd.DataFrame`` with per-question RAGAS scores, plus a summary row.
     """
     try:
+        import sys
+        import types
+        if "langchain_community.chat_models.vertexai" not in sys.modules:
+            vmod = types.ModuleType("langchain_community.chat_models.vertexai")
+            vmod.ChatVertexAI = object
+            sys.modules["langchain_community.chat_models.vertexai"] = vmod
+
         from ragas import evaluate
         from ragas.metrics import (
             answer_relevancy,
@@ -84,11 +91,20 @@ def run_ragas_evaluation(
     dataset = _build_ragas_dataset(results)
     logger.info("Running RAGAS evaluation on %d questions …", len(dataset))
 
-    llm = ChatOpenAI(
-        model=config.LLM_MODEL,
-        temperature=0,
-        openai_api_key=config.OPENAI_API_KEY,
-    )
+    if "groq.com" in config.LLM_BASE_URL.lower():
+        api_key = config.GROQ_API_KEY or config.OPENAI_API_KEY or "dummy-key"
+    else:
+        api_key = config.OPENAI_API_KEY or config.GROQ_API_KEY or "dummy-key"
+
+    llm_kwargs = {
+        "model": config.LLM_MODEL,
+        "temperature": 0,
+        "openai_api_key": api_key,
+    }
+    if config.LLM_BASE_URL:
+        llm_kwargs["openai_api_base"] = config.LLM_BASE_URL
+
+    llm = ChatOpenAI(**llm_kwargs)
     embeddings = get_embeddings()
 
     ragas_result = evaluate(
@@ -127,11 +143,11 @@ def print_ragas_summary(df: pd.DataFrame) -> None:
         print("No RAGAS metric columns found in DataFrame.")
         return
 
-    print("\n" + "═" * 50)
+    print("\n" + "=" * 50)
     print("RAGAS Evaluation Summary")
-    print("═" * 50)
+    print("=" * 50)
     for col in metric_cols:
         mean_val = df[col].mean()
         print(f"  {col:<30} {mean_val:.4f}")
     print(f"  {'Total questions':<30} {len(df)}")
-    print("═" * 50 + "\n")
+    print("=" * 50 + "\n")
