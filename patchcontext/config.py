@@ -22,12 +22,21 @@ load_dotenv(_PROJECT_ROOT / ".env")
 GITHUB_TOKEN: str = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO: str = os.environ.get("GITHUB_REPO", "tiangolo/fastapi")
 
-# ─── OpenAI ──────────────────────────────────────────────────────────────────
+# ─── LLM & Embeddings ────────────────────────────────────────────────────────
 
+GROQ_API_KEY: str = os.environ.get("GROQ_API_KEY", "")
 OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", "")
+EMBEDDING_PROVIDER: str = os.environ.get("EMBEDDING_PROVIDER", "huggingface").lower()
 EMBEDDING_MODEL: str = os.environ.get("EMBEDDING_MODEL", "text-embedding-ada-002")
-LLM_MODEL: str = os.environ.get("LLM_MODEL", "gpt-4o-mini")
+HF_EMBEDDING_MODEL: str = os.environ.get("HF_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+
+LLM_MODEL: str = os.environ.get("LLM_MODEL", "llama-3.3-70b-versatile")
+LLM_BASE_URL: str = os.environ.get("LLM_BASE_URL", "https://api.groq.com/openai/v1")
 LLM_TEMPERATURE: float = float(os.environ.get("LLM_TEMPERATURE", "0"))
+
+# If base URL is Groq but model is still set to an OpenAI model (e.g. gpt-4o-mini in .env), auto-fix it
+if "groq.com" in LLM_BASE_URL.lower() and LLM_MODEL.startswith("gpt-"):
+    LLM_MODEL = "llama-3.3-70b-versatile"
 
 # ─── FAISS index ─────────────────────────────────────────────────────────────
 
