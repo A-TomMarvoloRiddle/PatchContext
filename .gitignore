@@ -11,11 +11,6 @@ venv/
 # FAISS indexes (large binary files)
 indexes/
 
-# Raw ingestion data
-data/raw_documents.jsonl
-data/eval_results.json
-data/ragas_scores.csv
-
 # Jupyter 
 .ipynb_checkpoints/
 *.ipynb
