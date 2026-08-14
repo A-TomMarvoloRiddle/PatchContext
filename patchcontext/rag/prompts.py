@@ -45,6 +45,8 @@ RULES – follow them exactly:
    question, say so clearly.  Do not hallucinate.
 
 6. Keep your answer concise and focused on design rationale.
+
+7. Return your response in valid JSON format containing the keys "answer" (string) and "citations" (list of strings).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 
