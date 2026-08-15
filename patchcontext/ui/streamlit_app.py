@@ -410,8 +410,7 @@ def main():
           <div class="pc-logo">🔍</div>
           <h1 class="pc-title">PatchContext</h1>
           <p class="pc-subtitle">
-            Ask <em>why</em> FastAPI was designed this way — answers grounded in
-            actual commit messages, pull requests, and issue threads.
+            Ask <em>why</em> FastAPI was designed this way — answers grounded in actual commit messages, pull requests, and issue threads.
           </p>
         </div>
         """,
@@ -435,19 +434,6 @@ def main():
 
     # ── Query input ────────────────────────────────────────────────────────────
     st.markdown("#### 💬 Ask a question")
-
-    example_questions = [
-        "Why does FastAPI use Pydantic instead of marshmallow?",
-        "What motivated the dependency injection design?",
-        "Why was async/await chosen over synchronous handlers?",
-        "Why does FastAPI generate OpenAPI docs automatically?",
-        "What was the reasoning behind response_model?",
-    ]
-
-    with st.expander("💡 Example questions", expanded=False):
-        for q in example_questions:
-            if st.button(q, key=f"ex_{q[:20]}"):
-                st.session_state["query_text"] = q
 
     query = st.text_area(
         label="Your question",
